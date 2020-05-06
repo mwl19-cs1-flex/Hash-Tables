@@ -65,7 +65,18 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        self.storage[index] = HashTableEntry(key, value) 
+        cur_index = self.storage[index]
+        if cur_index is not None:
+            last_index = None
+            while cur_index:
+                if cur_index.key == key:
+                    cur_index.value = value
+                    return
+                last_index = cur_index
+                cur_index = cur_index.next
+            last_index.next = HashTableEntry(key, value)
+        else:
+            self.storage[index] = HashTableEntry(key, value) 
 
     def delete(self, key):
         """
@@ -77,9 +88,16 @@ class HashTable:
         """
         index = self.hash_index(key)
         cur_index = self.storage[index]
-        if cur_index is None:
-            print('ERROR: Key not found!')
-        self.storage[index] = None
+        if cur_index is not None:
+            last_index = None
+            while cur_index:
+                if cur_index.key == key:
+                    if last_index:
+                        last_index.next = cur_index.next
+                    else:
+                        self.storage[index] = cur_index.next
+            last_index = cur_index
+            cur_index = cur_index.next
 
     def get(self, key):
         """
@@ -91,9 +109,13 @@ class HashTable:
         """
         index = self.hash_index(key)
         cur_index = self.storage[index]
-        if cur_index is None:
+        if cur_index is not None:
+            while cur_index:
+                if cur_index.key == key:
+                    return cur_index.value
+                cur_index = cur_index.next
+        else:
             return None
-        return self.storage[index].value
 
     def resize(self):
         """
@@ -102,6 +124,10 @@ class HashTable:
 
         Implement this.
         """
+        self.capacity = self.capacity * 2
+        for i in self.storage:
+            new_index = self.hash_index(self.storage[i].key)
+            return new_index
 
 if __name__ == "__main__":
     ht = HashTable(2)
