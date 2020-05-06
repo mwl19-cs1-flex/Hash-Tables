@@ -33,12 +33,20 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
+        # hash = 5381
+
+        # for i in key:
+        #     hash = ((hash << 5) + hash) + ord(i)
+
+        # return hash & 0xFFFFFFFF
+
         hash = 5381
+        str_byte = key.encode('utf-8')
 
-        for i in key:
-            hash = ((hash << 5) + hash) + ord(i)
+        for i in str_byte:
+            hash = ((hash*33)^i) % 0x100000000
 
-        return hash & 0xFFFFFFFF
+        return hash
 
     def hash_index(self, key):
         """
@@ -58,7 +66,6 @@ class HashTable:
         """
         index = self.hash_index(key)
         self.storage[index] = HashTableEntry(key, value) 
-        return self.storage[index]
 
     def delete(self, key):
         """
@@ -69,7 +76,8 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        if index not in self.storage:
+        cur_index = self.storage[index]
+        if cur_index is None:
             print('ERROR: Key not found!')
         self.storage[index] = None
 
@@ -82,9 +90,10 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        if index not in self.storage:
-            print('ERROR: Key not found!')
-        return self.storage[index]
+        cur_index = self.storage[index]
+        if cur_index is None:
+            return None
+        return self.storage[index].value
 
     def resize(self):
         """
