@@ -57,6 +57,7 @@ class HashTable:
         """
         index = self.hash_index(key)
         HashTable[index] = HashTableEntry(key, value) 
+        return HashTable[index]
 
     def delete(self, key):
         """
@@ -66,6 +67,10 @@ class HashTable:
 
         Implement this.
         """
+        index = self.hash_index(key)
+        if index not in HashTable:
+            print('ERROR: Key not found!')
+        HashTable[index] = None
 
     def get(self, key):
         """
@@ -75,6 +80,10 @@ class HashTable:
 
         Implement this.
         """
+        index = self.hash_index(key)
+        if index not in HashTable:
+            print('ERROR: Key not found!')
+        return HashTable[index]
 
     def resize(self):
         """
